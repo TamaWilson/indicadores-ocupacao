@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="LayoutPadrao">
+
+<section layout:fragment="conteudo">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-10">
+				<h1 th:text="|${planta.predio.nomePredio}|"></h1>
+			</div>
+			<div class="col-md-2">
+				<a th:href="@{/predios}" role="button" class="btn btn-default"
+					style="margin-top: 30px;">Cancelar</a>
+			</div>
+		</div>
+		<hr />
+		<div class="row">
+
+			<div class="col-md-8">
+
+				<section layout:include="TDHSFragmento" id="horarioFragmento"></section>
+			</div>
+			<div class="col-md-4">
+
+				<div class="row">
+
+					<form th:action="@{/mapeamento/editar/salvar}" method="POST"
+						th:object="${planta}">
+						<input type="hidden" id="idPlanta" th:field="*{idPlanta}" /> <input
+							type="hidden" th:field="*{predio.idPredio}" /> <input
+							type="hidden" th:field="*{semestre}" /> <input type="hidden"
+							th:field="*{arquivoNome}" />
+						<div class="row">
+							<div class="form-group">
+								<label for="nivel" class="control-label col-md-2">Nível
+									do pavimento:</label>
+								<div class="col-md-2">
+									<input type="number" min="0" th:field="*{nivel}" />
+								</div>
+							</div>
+						</div>
+
+
+
+						<div class="row">
+							<div class="col-md-6" style="margin-top: 10px;">
+								<button type="button" data-toggle="modal"
+													data-target="#modalApagar" 
+									class="btn btn-default">Apagar selecionado</button>
+								<button type="button" data-toggle="modal"
+													data-target="#modalLimpar" 
+									class="btn btn-default">Limpar tudo</button>
+							</div>
+							<div class="col-md-3 col-md-offset-1" style="margin-top: 10px;">
+								<input type="hidden" th:field="*{mapeamento}" /> <input
+									type="hidden" name="itemDeletados" id="itemDeletados" value="" />
+								<button id="salvarTudo" class="btn btn-success">Salvar
+									Alterações</button>
+							</div>
+
+						</div>
+
+
+						<br />
+
+						<div class="row">
+							<div class="col-md-12">
+								<canvas id="canvas" width="500" height="500"
+									style="border: 1px solid black;"></canvas>
+							</div>
+						</div>
+					</form>
+				</div>
+				<br />
+				<div class="row">
+					<div class="col-md-9">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">Identificação da sala</h3>
+							</div>
+							<div class="panel-body">
+								<div id="propriedade">
+									<div class="form-group">
+										<label for="idsala">Número da Sala</label> <input type="text"
+											class="form-control" id="salaNumero"
+											th:value="${sala.numeroSala}" />
+									</div>
+
+									<button type="button" onclick="alterarPropriedade();"
+										class="btn btn-default">Aplicar</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+
+
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="erroSalvar">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" style="color: red; font-weight: bolder;">ERRO!</h4>
+				</div>
+				<div class="modal-body">
+					<p id="erroMsg">Não é possível salvar uma planta sem salas
+						mapeadas</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modalApagar"
+	aria-labelledby="gridSystemModalLabel">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="gridSystemModalLabel">Excluir
+					prédio</h4>
+			</div>
+
+			<div class="modal-body">
+				<div class="alert alert-danger">
+					<strong>ATENÇÃO!</strong> Ao apagar esta sala você apagará todos os horários contidos nela!
+				</div>
+				<strong>PROSSIGA SOMENTE SE SOUBER O QUE ESTÁ FAZENDO!</strong>
+
+			</div>
+			<div class="modal-footer">
+
+				<div class="row pull-right">
+					<div class="col-md-6">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+					</div>
+					<div class="col-md-6">
+							<button onclick="apagar();" id="confirmarApagar"
+								class="btn btn-danger" 	>Remover</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
+</div>
+
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modalLimpar"
+	aria-labelledby="gridSystemModalLabel">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="gridSystemModalLabel">Excluir
+					prédio</h4>
+			</div>
+
+			<div class="modal-body">
+				<div class="alert alert-danger">
+					<strong>ATENÇÃO!</strong> Essa ação irá apagar todas as salas e horários contidos nelas!
+				</div>
+				<strong>PROSSIGA SOMENTE SE SOUBER O QUE ESTÁ FAZENDO!</strong>
+
+			</div>
+			<div class="modal-footer">
+
+				<div class="row pull-right">
+					<div class="col-md-6">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+					</div>
+					<div class="col-md-6">
+							<button onclick="limpar();" id="confirmarRemocao"
+								class="btn btn-danger " data-dismiss="modal">Remover</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
+</div>
+
+
+
+	<script th:src="@{/js/fabric.js}"></script>
+
+	<script th:inline="javascript">
+	
+	
+	
+	
+	//<![CDATA[ 
+		
+		
+		/*[+
+		 var urlTDHS = [[@{/tdhs/fragmento}]];
+	var urlAlterarNumero = [[@{/mapeamento/editarnumero}]]
+			 +]*/
+	
+var jsonCanvas = /*[[${planta.mapeamento}]]*/ ;
+var filename = /*[[${planta.arquivoNome}]]*/ ;
+var salaInicial = /*[[${sala.numeroSala}]]*/ ;
+
+var urlImg = "/plantas/" + filename;
+
+var deleteArray = [];
+
+var canvas = window._canvas = new fabric.Canvas('canvas');
+canvas.selection = false;
+
+
+
+
+var imgObj = new Image();
+var imagem = new fabric.Image(imgObj);
+imgObj.src = urlImg;
+altura= canvas.getHeight();
+largura = canvas.getWidth();
+imagem.set({height: altura , width: largura})
+
+imgObj.onload = function() {
+	canvas.setBackgroundImage(imagem);
+	canvas.renderAll();
+};
+
+
+canvas.loadFromJSON(jsonCanvas);
+canvas.renderAll();
+
+var salaAtiva = canvas.getItemBySala(salaInicial);
+salaAtiva.setColor('green');
+canvas.setActiveObject(salaAtiva);
+
+
+
+//Apaga o objeto selecionado
+function apagar() 
+{ 
+	salaAtiva = null;
+	if(canvas.getActiveObject()) 
+	{
+		
+		
+		deletar = canvas.getActiveObject();
+		canvas.getActiveObject().remove();
+		$("#salaNumero").val("");
+		
+		
+		deleteArray.push(deletar.idSala);
+		
+		if(canvas.size() > 0) {
+		
+		canvas.setActiveObject(canvas.item(0));
+		atualizarSala(canvas.item(0));
+		canvas.renderAll();
+		
+		return atualizarTDHS(canvas.item(0));
+		
+		}
+	}
+
+}
+
+//Apaga todos os objetos do tipo retângulo - O backgroun permanesse intacto
+function limpar() 
+{
+	salaAtiva = null;
+	listaObjetos = canvas.getObjects('rect');
+	for(var i = 0; i < listaObjetos.length; i++) 
+	{
+		listaObjetos[i].remove();
+		deleteArray.push(listaObjetos[i].idSala);
+	}
+	$("#salaNumero").val("");
+	
+	
+	return $.ajax({
+		url : urlTDHS,
+		type : 'POST',
+		data : {
+			salaNumero: "",
+			salaAtualizada : 0,
+			predioAtual: /*[[${sala.predio.idPredio}]]*/,
+			semestreTDHS: /*[[${semestreAtual.idSemestre}]]*/
+		},
+		beforeSend: function() {
+			
+		}
+	})
+
+	.done(
+			function(data) {
+				$("#horarioFragmento").html(data);
+			})
+
+	.fail(
+			function(xhr, ajaxOptions, thrownError) {
+
+	});
+
+	
+	
+}
+
+function salvar() 
+{
+	canvasJson = canvas.toJSON();
+	delete canvasJson.backgroundImage;
+	document.getElementById('mapeamento').value = JSON.stringify(canvasJson);
+	document.getElementById('itemDeletados').value = deleteArray;
+	return true;
+	
+}
+
+
+
+$(document).ready(function(){
+    $('#salvarTudo').click(function(e){
+
+    	listaObjetos = canvas.getObjects('rect');
+   
+    	if(listaObjetos.length == 0) {
+    		console.log("Não salvei");
+
+    		e.preventDefault();
+
+			$('#erroMsg').val("Não é possível salvar uma planta sem salas mapeadas");
+    		$('#erroSalvar').modal('show');
+	    		
+    	} else {
+    		
+    		if(checarSalaSemNumero(listaObjetos)){
+    			salvar() ;
+
+    			e.submit();
+    			    			
+    		} else { 
+    			
+   		     	 e.preventDefault();  			  			
+
+    			$('#erroMsg').text("Existem salas sem numeração");
+    			$('#erroSalvar').modal('show');
+    		}
+       }
+    	
+    	 });
+});
+
+
+function checarSalaSemNumero(salas){ 
+	console.log(salas.length);
+	 var object = null;
+	 for (var i = 0, len = salas.length; i < len; i++) {
+		 if(!salas[i].sala) {
+			 	console.log("ENTREI");
+			 
+		     salaAtiva.setColor('red');
+		     canvas.setActiveObject(salas[i]);
+		     salas[i].setColor('yellow');
+		 	 salaAtiva = salas[i];
+		 	$("#salaNumero").val(salas[i].sala);
+		 	atualizarTDHS(salas[i]);
+		 	canvas.renderAll();
+			 return false;
+		 }
+  }
+	 return true;
+}
+
+
+canvas.on({
+    'mouse:down': function(e) {
+      if (e.target) {
+    	  
+        e.target.opacity = 0.5;
+       
+        canvas.renderAll();
+        
+        atualizarSala(e.target);
+
+        
+    	return atualizarTDHS(e.target);
+
+        
+       } else { 
+
+   		var pointer = canvas.getPointer(event.e);
+   		var rect = new fabric.Rect(
+   				{
+   					fill: 'red',
+   					opacity: 0.3,
+   					top : pointer.y,
+   					left : pointer.x,
+   					width : 40,
+   					height : 40,
+   					fill : 'red',
+   					originX: 'center',
+   					originY: 'center',
+   					sala: "",
+   					idSala: 0
+   				});
+   		
+   		canvas.add(rect);
+   		canvas.setActiveObject(rect);
+   		atualizarSala(rect);      
+   		
+	   		return atualizarTDHS(rect);
+       
+       
+       
+       
+       }
+      
+    },
+    'mouse:up': function(e) {
+      if (e.target) {
+        e.target.opacity = 0.3;
+        canvas.renderAll();
+     }
+    }
+  });
+
+
+function atualizarSala(salaEscolhida) {
+	
+	if(salaAtiva != null) {	
+    	salaAtiva.setColor('red');
+	}
+
+	salaEscolhida.setColor('green');
+	salaAtiva = salaEscolhida;
+		
+	$("#salaNumero").val(salaEscolhida.sala);
+	
+};		
+
+
+
+function alterarPropriedade() 
+{ 
+	
+	
+	valor = document.getElementById('salaNumero').value;
+	objeto = canvas.getActiveObject();
+	objeto.sala = valor;
+	
+	if (objeto.idSala == 0){
+		
+		return atualizarTDHS(objeto)
+       
+		
+	} else { 
+	
+	
+	
+	 valor = document.getElementById('salaNumero').value;
+	 objeto = canvas.getActiveObject();
+	 objeto.sala = valor;
+	
+	 objeto.fill = 'red';
+	
+	canvas.renderAll();
+
+	console.log("Modificado", objeto.sala);
+	
+	canvasJson = canvas.toJSON();
+	delete canvasJson.backgroundImage;
+	console.log(JSON.stringify(canvasJson));
+	
+	return $.ajax({
+		url : urlAlterarNumero,
+		type : 'POST',
+		data : {
+			idSala : objeto.idSala,
+			novoNumero: objeto.sala,
+			predioAtual: /*[[${sala.predio.idPredio}]]*/,
+			plantaAtual: /*[[${planta.idPlanta}]]*/,
+			mapeamentoAtualizado: JSON.stringify(canvasJson)
+		},
+		beforeSend: function() {
+			
+	
+		}
+	})
+
+	.done(
+			function(data) {
+				$("#horarioFragmento").html(data);
+			})
+
+	.fail(
+			function(xhr, ajaxOptions, thrownError) {
+	
+	});
+	
+	}
+}
+
+function atualizarTDHS(objeto) {
+
+return $.ajax({
+	url : urlTDHS,
+	type : 'POST',
+	data : {
+		
+		salaNumero: objeto.sala,
+		salaAtualizada : objeto.idSala,
+		predioAtual: /*[[${sala.predio.idPredio}]]*/,
+		semestreTDHS: /*[[${semestreAtual.idSemestre}]]*/
+	},
+	beforeSend: function() {
+	
+	}
+})
+
+.done(
+		function(data) {
+			$("#horarioFragmento").html(data);
+		})
+
+.fail(
+		function(xhr, ajaxOptions, thrownError) {
+
+});
+
+
+}
+
+
+
+
+
+//Sobrecarrega a classe Object do fabric.js para inclui nativamente a propriedade "sala"
+fabric.Object.prototype.toObject = (function (toObject) {
+	return function () {
+		return fabric.util.object.extend(toObject.call(this), {
+			sala: this.sala,
+			idSala : this.idSala
+		});
+	};
+})(fabric.Object.prototype.toObject);
+
+
+//]]>
+
+
+
+</script>
+</section>
+</html>

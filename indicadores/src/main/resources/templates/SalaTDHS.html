@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="LayoutPadrao">
+
+<section layout:fragment="conteudo">
+
+	<div class="container-fluid">
+		<div class="row">
+
+
+			<ol class="breadcrumb">
+				<li><a th:href="@{/}">Principal</a></li>
+				<li><a
+					th:href="@{/predio/{codigo}(codigo=${sala.predio.idPredio})}">
+						Detalhes </a></li>
+				<li class="active"><a
+					th:href="@{/predio/{codigo}/tdhs/(codigo=${sala.predio.idPredio})}">THDS
+						Geral</a></li>
+				<li class="active">Sala TDHS</li>
+			</ol>
+
+
+		</div>
+
+		<hr />
+
+		<div class="col-md-8">
+			<section layout:include="TDHSFragmento" id="horarioFragmento"></section>
+
+		</div>
+
+		<div class="col-md-4">
+			<section layout:include="ExibirMapeamento"></section>
+
+		</div>
+
+
+
+
+	</div>
+
+</section>
+
+
+
+</html>

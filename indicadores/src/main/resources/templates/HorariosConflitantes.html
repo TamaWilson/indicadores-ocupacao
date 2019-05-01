@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+
+
+<div class="col-md-4">
+	<h4>Horários não alocados nesta sala:</h4>
+	<div th:each="turno : ${turnos}" class="panel-group">
+
+		<div class="panel panel-default cursor">
+			<div class="panel-heading">
+				<h4 class="unselectable"
+					th:text="|${#strings.toUpperCase(turno.identificador)}|"></h4>
+			</div>
+			<div class="panel-body">
+				<table class="table">
+					<tr>
+						<th class="col-md-6">DISCPLINA</th>
+						<th class="col-md-4">DETALHES</th>
+						<th class="col-md-1">STATUS</th>
+						<th class="col-md-1">AÇÃO</th>
+					</tr>
+
+					<tr th:each="horarioConflito : ${horariosConflitantes}"
+						th:if="${turno.tipo == horarioConflito.tipoDescricao}">
+						<td th:text="${horarioConflito.disciplinaNome}"></td>
+
+
+						<td th:each="dia : ${diasSemana}"
+							th:if="${dia.ordem == horarioConflito.diaSemana}"
+							th:text="| ${#strings.capitalize(#strings.toLowerCase(dia.descricao))} - ${horarioConflito.horarioOrdem}º Horario|"></td>
+						<td><span th:class="${horarioConflito.status.get('classe')}"></span></td>
+						<td><button  type="button"
+								class=" btn btn-default alocar" data-toggle="modal"
+								data-target="#modalAlocar"
+								th:attrappend="data-disciplinaId=${horarioConflito.disciplinaId}, data-diaSemana=${horarioConflito.diaSemana}, data-ordem=${horarioConflito.horarioOrdem}, data-tipo=${horarioConflito.tipoDescricao}">Alocar</button></td>
+					</tr>
+				</table>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<div style="display:none;">
+
+		<p th:each="removido : ${horariosRemove}" th:text="${removido.disciplinaId}"></p>
+
+
+</div>
+
+
+<script type="text/javascript">
+			
+
+			
+$(".alocar").click(function () {
+	
+	
+	 disciplinaId =  this.getAttribute('data-disciplinaId');
+     disciplinaDiaSemana = this.getAttribute('data-diaSemana');
+    disciplinaOrdem = this.getAttribute('data-ordem');
+     disciplinaTipo = this.getAttribute('data-tipo');
+
+	
+});
+	
+
+	
+	</script>
+
+</html>

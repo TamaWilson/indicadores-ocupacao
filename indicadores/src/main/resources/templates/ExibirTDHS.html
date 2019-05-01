@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="LayoutPadrao">
+
+<section layout:fragment="conteudo">
+
+
+
+	<div class="container-fluid">
+
+		<div class="row">
+			<ol class="breadcrumb">
+				<li ><a th:href="@{/}">Principal</a></li>
+				<li ><a
+						th:href="@{/predio/{codigo}(codigo=${predio.idPredio})}"
+						> Detalhes </a></li>
+						<li class="active">THDS Geral</li> 
+			</ol>
+		</div>
+
+	</div>
+
+
+
+	<div class="container" th:if="${salas.empty}">
+
+		<h1 th:text="${predio.nomePredio}"></h1>
+		<hr />
+
+		<p>O prédio não possui nenhuma sala cadastradada</p>
+
+	</div>
+
+	<div class="container-fluid " th:if="${!salas.empty}">
+
+		<div class="col-md-offset-1 col-md-10">
+
+			<div class="row">
+				<div class="col-md-2">
+					
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+					<h1 th:text="${predio.nomePredio}"></h1>
+					<hr />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-7">
+					<h3>Taxa de Disponibilidade de Horários nas Salas de Aula
+						durante a Semana</h3>
+				</div>
+				<div class="col-md-5">
+					<ul class="nav nav-pills">
+						<li class="active"><a data-toggle="pill" href="#home">GERAL</a></li>
+						<li><a data-toggle="pill" href="#mat">Matutino</a></li>
+						<li><a data-toggle="pill" href="#vesp">Vespertino</a></li>
+						<li><a data-toggle="pill" href="#not">Noturno</a></li>
+					</ul>
+				</div>
+
+			</div>
+
+
+
+			<div class="tab-content">
+
+				<div id="home" class="tab-pane fade in active">
+					<section layout:include="TDHSGeral"></section>
+				</div>
+				<div id="mat" class="tab-pane fade">
+
+					<section layout:include="TDHSGeralMatutino"></section>
+				</div>
+				<div id="vesp" class="tab-pane fade">
+					<section layout:include="TDHSGeralVespertino"></section>
+				</div>
+				<div id="not" class="tab-pane fade">
+					<section layout:include="TDHSGeralNoturno"></section>
+				</div>
+			</div>
+
+
+
+
+
+
+
+		</div>
+	</div>
+</section>
+</html>

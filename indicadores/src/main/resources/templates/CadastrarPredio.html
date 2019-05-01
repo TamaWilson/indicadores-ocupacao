@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="LayoutPadrao">
+
+<section layout:fragment="conteudo">
+	<div class="container">
+		<h1>Cadastrar Prédio</h1>
+		<hr />
+		<div class="alert alert-danger  fade in alert-dismissable" th:if="${!#strings.isEmpty(mensagem)}">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a> 
+			<span th:text="${mensagem}"></span>
+		</div>
+		
+		<form class="form-horizontal" th:action="@{/cadpredio/{codigo}(codigo=*{centro.idCentro})}" method="POST"
+			th:object="${predio}">
+			
+			<input th:field="*{idPredio}" type="hidden" />
+			<div class="form-group">
+				<label for="centro" class="control-label col-md-2">Centro:</label>
+				<div class="col-md-6">
+					<input type="text" readonly="readonly" class="form-control"
+						id="centro" th:field="*{centro.nomeCentro}"  />
+						<input type="hidden" th:field="*{centro.idCentro}" />
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-md-offset-2 col-md-11">
+					<div class="checkbox">
+						<label> <input id="definirCentro" type="checkbox" />
+							Definir este centro como prédio
+						</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="predio" class="control-label col-md-2">Prédio:</label>
+				<div class="col-md-9">
+					<input type="text" id="predio" class="form-control"
+						th:field="*{nomePredio}" required="required" />
+				</div>
+			</div>
+			<hr />
+			<h3>Contatos:</h3>
+			<br />
+			<div class="form-group">
+				<label for="endereco" class="control-label col-md-2">Endereço:</label>
+				<div class="col-md-9">
+					<input type="text" class="form-control" th:field="*{endereco}" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="cep" class="control-label col-md-2">Cep:</label>
+				<div class="col-md-2">
+					<input type="text" class="form-control" th:field="*{cep}" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="telefone" class="control-label col-md-2">Telefone:</label>
+				<div class="col-md-2">
+					<input type="text" class="form-control" th:field="*{telefone}" />
+				</div>
+				<label for="celular" class="control-label col-md-1">Celular:</label>
+				<div class="col-md-2">
+					<input type="text" class="form-control" th:field="*{celular}" />
+				</div>
+				<label for="telefone" class="control-label col-md-1">E-mail:</label>
+				<div class="col-md-3">
+					<input type="email" class="form-control" th:field="*{email}" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="diretor" class="control-label col-md-2">Diretor(a):</label>
+				<div class="col-md-9">
+					<input type="text" class="form-control" th:field="*{diretor}" />
+				</div>
+			</div>
+			<hr />
+			<h3>Cursos:</h3>
+			<br />
+			<div class="form-group">
+				<label for="preseciais" class="control-label col-md-2">Presenciais:</label>
+				<div class="col-md-1">
+					<input type="number" min="0" class="form-control"
+						th:field="*{presenciais}" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="ead" class="control-label col-md-2">A distância:</label>
+				<div class="col-md-1">
+					<input type="number" min="0" class="form-control" th:field="*{ead}" />
+				</div>
+			</div>
+
+			<hr />
+			<h3>Infraestrutura:</h3>
+			<br />
+			<div class="form-group">
+				<label for="areaterreno" class="control-label col-md-2">Área
+					do Terreno:</label>
+				<div class="col-md-2">
+					<div class="input-group">
+						<input type="text" class="form-control" th:field="*{areaTerreno}" />
+						<div class="input-group-addon">m²</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="areaconstruida" class="control-label col-md-2">Área
+					Construída:</label>
+				<div class="col-md-2">
+					<div class="input-group">
+						<input type="text" class="form-control"
+							th:field="*{areaConstruida}" />
+						<div class="input-group-addon">m²</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="propriedade" class="control-label col-md-2">Propriedade
+					do Prédio:</label>
+				<div class="col-md-4">
+					<input type="text" class="form-control" th:field="*{propriedade}"
+						placeholder="Ex.: Próprio, Cedido, Alugado" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="propriedade" class="control-label col-md-2">Documento:</label>
+				<div class="col-md-4">
+					<input type="text" class="form-control" th:field="*{documento}" />
+				</div>
+			</div>
+			
+			
+			<hr />
+			<h3>Observações:</h3>
+			<br />
+			
+			<div class="form-group">
+				<div class="col-md-offset-2 col-md-6">
+					 <textarea class="form-control" rows="7" th:field="*{observacao}" ></textarea>
+				</div>
+			</div>
+			
+			
+			
+			<hr />
+			<h3>Localização:</h3>
+			<br />
+
+			<section layout:include="GoogleMapsCadastro"></section>
+
+			<input type="hidden" id="lat" th:field="*{lat}" /> <input
+				type="hidden" id="lon" th:field="*{lon}" />
+			<button type="submit" onclick="getLocalizacao();"
+				class="btn btn-default btn-lg">Salvar</button>
+		</form>
+	</div>
+
+
+
+
+	<script th:inline="javascript">
+		
+
+		/*[+
+		 var Lat = [[${predio.lat}]];
+		 var Lon = [[${predio.lon}]];
+		 +]*/
+
+		 var zoomPagina = 11;
+		 var zoomPredio = 16;
+		 
+		$("#definirCentro").change(function() {
+			if (this.checked) {
+				var centro = $("#centro").val();
+				$('#predio').prop('readonly', true);
+				$('#predio').val(centro);
+
+			} else {
+
+				$('#predio').prop('readonly', false);
+				$('#predio').val("");
+
+			}
+		});
+
+		function getLocalizacao() {
+			document.getElementById("lat").value = marcadoExibido.position
+					.lat();
+			document.getElementById("lon").value = marcadoExibido.position
+					.lng();
+			return true;
+		}
+	</script>
+
+</section>
+
+</html>

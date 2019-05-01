@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+
+
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modalRemover"
+	aria-labelledby="gridSystemModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="gridSystemModalLabel">Alocar
+					horário</h4>
+			</div>
+
+
+
+			<div class="modal-body">
+				<p>Você tem certeza que deseja remover o horário selecionado do quadro?</p>
+
+			</div>
+			<div class="modal-footer">
+
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+				<button type="button" id="confirmarRemocao" class="btn btn-danger">Remover</button>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<script type="text/javascript" th:src="@{/js/jquery.validate.min.js}"></script>
+<script th:inline="javascript">
+	/*[+
+	 var urlRemover = [[@{/cadhorarios/horarios/remover}]];	
+	 var idSala = [[${sala.idSala}]]
+	 +]*/
+
+	$('#confirmarRemocao').on('click', function(e) {
+		$.ajax({
+			url : urlRemover,
+			type : 'POST',
+			data : {
+				horarioId : horarioId,
+				disciplinaAlocada : disciplinaId,
+				diaSemana : disciplinaDiaSemana,
+				ordem : disciplinaOrdem,
+				tipo : disciplinaTipo,
+				salaAlocada : idSala,
+				remover: remocao,
+				realocar: realocacao,
+			},
+			beforeSend : function() {
+
+				$('#modalEspera').modal({
+					backdrop : 'static',
+					keyboard : false,
+					show : true
+				});
+			}
+		})
+
+		.done(function(data) {
+			
+			$("#modalRemover").modal('hide');
+			$('#modalEspera').modal('hide');
+
+			$("#containerConflitantes").html(data);
+			console.log("tentarei reomover o" + horarioId);
+			$("#" + horarioId).html("");
+		})
+
+		.fail(function(xhr, ajaxOptions, thrownError) {
+			$('#modalEspera').modal('hide');
+			$('#modalErro').modal('show');
+		});
+	});
+</script>
+
+
+</html>

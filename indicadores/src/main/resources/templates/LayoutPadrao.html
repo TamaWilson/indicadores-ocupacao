@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+<head>
+<meta charset="utf-8" />
+
+<script type="text/javascript" src="/js/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+
+
+
+<meta name="_csrf" th:content="${_csrf.token}" />
+<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+
+<link rel="stylesheet" type="text/css"
+	th:href="@{/css/bootstrap.min.css}" />
+<link rel="stylesheet" type="text/css"
+	th:href="@{/css/bootstrap.min.css}" />
+<link rel="stylesheet" type="text/css" th:href="@{/css/salas.css}" />
+
+<title>Indicadores - SALAS</title>
+
+</head>
+<body>
+
+	<div class="container" id="banner">
+		<div class="row">
+			<img alt="Brand" th:src="@{/images/topo-proplan.png}" />
+		</div>
+	</div>
+	<nav class="navbar navbar-inverse navbar-static-top">
+		<div class="container-fluid">
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse"
+				id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li sec:authorize="isAuthenticated()"><a th:href="@{/}"><span
+							class="glyphicon glyphicon-home biggerIcon"></span></a></li>
+
+					<li sec:authorize="isAuthenticated()" th:if="${semestres}"
+						th:object="${semestreContexto}"
+						style="margin-left: 40px; margin-top: 5px;">
+						<div class="row">
+							<div style="margint-top: 5px; color: white;">Contexto
+								ativo:</div>
+						</div>
+						<div class="row">
+							<form th:action="@{/mudarcontexto}" method="POST" id="formContexto">
+							<input type="hidden" value="" name="urlAtual" id="mudaContexto" />
+								<select class="form-control" th:field="*{idSemestre}"
+								      >
+									<option th:each="semestre : ${semestres}"
+										th:value="${semestre.idSemestre}"
+										th:text="|${semestre.ano}.${semestre.semestre}|"></option>
+								</select>
+							</form>
+						</div>
+
+					</li>	
+					
+			 
+				</ul>
+ 
+				<ul sec:authorize="isAuthenticated()"
+					class="nav navbar-nav navbar-right">
+					
+				
+					<li class="dropdown" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_GESTOR')"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown" role="button" aria-haspopup="true"
+						aria-expanded="false"><span
+							class="glyphicon glyphicon-cog biggerIcon"></span><span
+							class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a th:href="@{/semestres}">Semestre</a></li>
+							<li><a th:href="@{/centros}">Centros</a></li>
+							<li><a th:href="@{/predios}">Prédios</a></li>
+							<!-- ><li><a href="#">Something else here</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="#">Separated link</a></li>-->
+						</ul></li>
+							<li ><a th:href="@{/logout}"><span class="glyphicon glyphicon-off biggerIcon"></span></a></li>
+				</ul>
+			</div>
+			<!-- /.navbar-collapse -->
+		</div>
+	</nav>
+
+
+	<section layout:fragment="conteudo"></section>
+	<div class="footer-separator"></div>
+	<footer class="footer">
+		<div class="container" style="margin-top: 14px;">
+
+			<div class="row">
+			
+			<div class="col-md-2 text-right"> 			<img style="width: 80px;" th:src="@{/images/brasao-salas.png}" />
+</div>
+			<div class="col-md-10" style="padding: 1% 0 0;">
+			
+				<span class="text-muted">Todos os direitos reservados
+					Universidade X. </span><br /> <span
+					class="text-muted">Endereço Removido/span><br />
+				<span class="text-muted">Pró-Reitoria de X</span><br /> <span class="text-muted">Núcleo de
+					Tecnologias da Informação - NTI</span><br /> <span class="text-muted">Assessoria
+					de Comunicação Institucional</span>
+					</div>
+			</div>
+		</div>
+	</footer>
+	<script type="text/javascript">
+		$(function() {
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			$(document).ajaxSend(function(e, xhr, options) {
+				xhr.setRequestHeader(header, token);
+			});
+		});
+		
+		$(document).ready(function(){			
+		$('#idSemestre').on('change', function(e) {
+			 
+			var urlAtual = "/" + window.location.href.replace(/(?:.*?\/){3}/, "");
+ 
+
+			$('#mudaContexto').val(urlAtual);
+			console.log(urlAtual);
+			
+			$("#formContexto").submit();
+			
+			
+		});
+		
+		});
+		
+	</script>
+</body>
+</html>

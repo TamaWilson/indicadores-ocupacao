@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+</head>
+
+<body>
+	<div th:fragment="resultsList">
+		<select id="seletorSala" name="sala" class="form-control" required="required">
+			<option value="" disabled="disabled" selected="selected">Selecione uma sala</option>
+			<option th:each="sala : ${salas}"
+				th:value="${sala.idSala}"
+				th:text="${sala.numeroSala}"></option>
+		</select>
+	</div>
+</body>
+</html>

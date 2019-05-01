@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="LayoutPadrao">
+
+
+
+<section layout:fragment="conteudo">
+
+
+
+	<div class="container-fluid">
+	<div class="row">
+	<ol class="breadcrumb">
+  <li ><a th:href="@{/}">Principal</a></li>
+  <li class="active">Detalhes</li>
+ </ol>
+</div>
+
+		<div class="row">
+			<div class="col-md-1">
+				<h1 th:text="${predio.centro.sigla}"></h1>
+			</div>
+			<div class="col-md-11">
+				<h1 th:text="${predio.nomePredio}"></h1>
+			</div>
+		</div>
+
+
+		<div class="row">
+			<div class="col-md-2">
+				
+			</div>
+		</div>
+
+		<hr />
+		<div class="row">
+
+
+
+			<div class="col-md-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 style="font-weight: bolder;" class="panel-title">M01</h3>
+					</div>
+
+					<div class="list-group">
+						<a th:href="@{/predio/{codigo}/tdhs(codigo=${predio.idPredio})}"
+							class="list-group-item">TAXA DE DISPONIBILIDADE DE HORÁRIOS
+							NAS SALAS DE AULA (TDHS)</a> <a href="#"
+							class="list-group-item disabled">QUALIDADE DE OCUPAÇÃO DOS
+							AMBIENTES (QOCP)</a> <a href="#" class="list-group-item disabled">ACESSIBILIDADE</a>
+						<a href="#" class="list-group-item disabled">COMBATE A
+							INCÊNDIO E PÂNICO</a> <a href="#" class="list-group-item disabled">INSTALAÇÕES
+							DE LÓGICA</a>
+					</div>
+				</div>
+
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 style="font-weight: bolder;" class="panel-title">M02</h3>
+					</div>
+
+					<div class="list-group">
+						<a href="#" class="list-group-item disabled">INSTALAÇÕES
+							HIDRÁULICAS</a> <a href="#" class="list-group-item disabled">INSTALAÇÕES
+							PLUVIAIS</a> <a href="#" class="list-group-item disabled">ACESSIBILIDADE</a>
+						<a href="#" class="list-group-item disabled">INSTALAÇÕES
+							SANITÁRIAS</a> <a href="#" class="list-group-item disabled">INSTALAÇÕES
+							ELÉTRICAS</a>
+					</div>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 style="font-weight: bolder;" class="panel-title">M03</h3>
+					</div>
+
+					<div class="list-group">
+						<a href="#" class="list-group-item disabled">SISTEMA DE
+							PROTEÇÃO CONTRA DESCARGAS ATMOSFÉRICAS (SPDA)</a> <a href="#"
+							class="list-group-item disabled">TELEFONIA</a> <a href="#"
+							class="list-group-item disabled">CIRCUITO FECHADO DE TV
+							(CFTV)</a>
+
+					</div>
+				</div>
+
+			</div>
+
+			<div class="col-md-6">
+
+				<div class="row">
+					<div class="col-md-8">
+						<div id="map" style="width: 100%; height: 500px"></div>
+					</div>
+
+					<div class="  col-md-4 ">
+						<div class="col-md-12 break-text predioDetalhes">
+						<h3 class="text-center">Dados do prédio:</h3>
+						<p style="font-weight: bold; text-decoration: underline;">Contato:</p>
+						<p th:text="|End.: ${predio.endereco} - ${predio.cep}"></p>
+						<p th:text="|Tel.: ${predio.telefone}|"></p>
+						<p th:text="|Cel.: ${predio.celular}|"></p>
+						<p th:text="|Email: ${predio.email}"></p>
+						<p style="font-weight: bold; text-decoration: underline;">Diretor(a)
+							Centro:</p>
+						<p th:text="${predio.diretor}"></p>
+						<p style="font-weight: bold; text-decoration: underline;">Quantidade
+							de Centros:</p>
+						<p th:text="|Presenciais: ${predio.presenciais}|"></p>
+						<p th:text="|Distância: ${predio.ead}|"></p>
+						<p style="font-weight: bold; text-decoration: underline;">Infraestrutura:</p>
+						<p th:text="|Área do Terreno: ${predio.areaTerreno}m²|"></p>
+						<p th:text="|Área Construída: ${predio.areaConstruida}m²|"></p>
+						<p th:text="|Prédio: ${predio.propriedade}|"></p>
+						<p th:text="|Doc.: ${predio.documento}|"></p>
+
+					</div>
+					</div>
+				</div>
+				<br />
+				<div class="row">
+					<div class="col-md-12">
+				       <div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Observações</h3>
+  </div>
+  <div class="panel-body observacao">
+    <p class="break-text" th:text="${predio.observacao}"></p>
+  </div>
+</div>
+				    </div>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+
+
+	<script th:inline="javascript">
+		var predio = /*[[${predio}]]*/
+		//<![CDATA[
+		function initMap() {
+			var map = new google.maps.Map(document.getElementById('map'));
+			var centralizar = new google.maps.LatLng(predio.lat, predio.lon)
+			map.setCenter(centralizar);
+			map.setZoom(17);
+
+			var infowindow = new google.maps.InfoWindow();
+
+			var marcador, i;
+			marcador = new google.maps.Marker({
+				position : centralizar,
+				map : map,
+			});
+
+		}
+
+		//]]>
+	</script>
+	<script
+		th:src="@{https://maps.googleapis.com/maps/api/js(key=${googleMapsAPIKey},callback=initMap)}"
+		async="async" defer="defer"></script>
+
+</section>
+
+
+
+
+</html>

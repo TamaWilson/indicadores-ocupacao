@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+	
+	
+	
+ <div id="floating-panel" class="form-group">
+ 	 <label for="mapLocalizacao" class="control-label col-md-2 float-right">Localização:</label>
+ 	 <div class="col-md-5">
+      <input id="mapLocalizacao" type="text" name="mapLocalizacao" value="" placeholder="Ex.: São Luís" class="form-control" />
+     </div>
+      <input id="localizar" type="button" class="btn btn-default" value="Localizar" />
+    	
+    </div>
+    <div class="col-md-offset-2">
+  <div id="map" style="width: 500px; height: 400px"></div>
+					</div>
+				
+					<script type="text/javascript">
+					
+					$("#mapLocalizacao").ready(function() {
+						  $(window).keydown(function(event){
+						    if(event.keyCode == 13) {
+						      event.preventDefault();
+						      $('#localizar').click();
+						      return false;
+						    }
+						  });
+						});
+					
+					</script>
+					
+	    <script type="text/javascript">
+	  //<![CDATA[
+	    
+	  
+	    var marcadoExibido = null;
+	    
+	    function initMap() {
+	    	    map = new google.maps.Map(document.getElementById('map'), {
+	    	    zoom: zoomPagina,
+	    	    center: {lat: -2.5604588, lng: -44.3281625}
+	    	  });
+	    	  var geocoder = new google.maps.Geocoder();
+	    	  var posicaoMarcador = new google.maps.LatLng(Lat,Lon);
+	    	  
+	    	  if((Lat != null && Lat != 0)  && (Lon != null && Lon != 0)) { 
+	    		  map.setCenter(posicaoMarcador);
+	    		   
+	    		  if(zoomPredio){
+		    	    	  
+	    			  map.setZoom(zoomPredio);  	  
+		    	      }
+	    	  }
+	    	  
+
+	    	  document.getElementById('localizar').addEventListener('click', function() {
+	    	    geocodeAddress(geocoder, map);
+	    	  });
+	    	  
+	    	  var marcadorInicial = new google.maps.Marker({
+	    		  position: posicaoMarcador,
+	    	      draggable: true
+
+	    		});
+	    	  
+	    	  marcadorInicial.setMap(map);
+	    	  marcadoExibido = marcadorInicial;
+	    	  
+	    	  }
+				    	  
+	
+
+	    	function geocodeAddress(geocoder, resultsMap) {
+	    	  var address = document.getElementById('mapLocalizacao').value;
+	    	  geocoder.geocode({'address': address + ", MA"}, function(results, status) {
+	    	    if (status === google.maps.	GeocoderStatus.OK) {
+	    	    	if(marcadoExibido) {
+	    	    		marcadoExibido.setMap(null);
+	    	    		marcadoExibido = null;
+	    	    	}
+	    	      resultsMap.setCenter(results[0].geometry.location);
+
+	    	      var marcador = new google.maps.Marker({
+	    	        map: resultsMap,
+	    	        position: results[0].geometry.location,
+	    	        draggable: true
+
+	    	      });
+	    	      
+	    	      
+	    	      if(zoomPredio){
+	    	    	  
+	    	    	  resultsMap.setZoom(zoomPredio);
+	    	    	  
+	    	      }
+	    	      
+	    	      
+	    	      
+	    	      marcadoExibido = marcador;
+	    	    } else {
+	    	      alert('Ocorreu um erro ao utiliza a API Google Maps: ' + status);
+	    	    }
+	    	  });
+	    	}
+	    	
+	    	
+	    	  //]]>
+	  </script>
+    <script th:src="@{https://maps.googleapis.com/maps/api/js(key=${googleMapsAPIKey},callback=initMap)}" async="async" defer="defer"></script>
+
+</html>

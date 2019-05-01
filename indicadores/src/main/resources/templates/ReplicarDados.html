@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="LayoutPadrao">
+
+
+<th:block th:if="${predioTotal != 0}">
+
+	<h3>Replicar Dados</h3>
+	<hr />
+	
+<div class="form-group">
+<div class="col-md-12">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>ARTEFATO</th>
+					<th>QUANTIDADE</th>
+				</tr>
+
+
+			</thead>
+
+			<tbody>
+				<tr>
+					<td>Prédios</td>
+					<td th:text="${predioTotal}"></td>
+				</tr>
+				<tr>
+					<td>Salas</td>
+					<td th:text="${salaTotal}"></td>
+				</tr>
+			</tbody>
+
+		</table>
+		<p>
+			<strong>Você gostaria de replicar os dados atuais para o
+				novo contexto?</strong>
+		</p>
+		<label class="radio-inline"> <input type="radio"
+			name="replicarDados" id="radioSim" value="0" required="required" /> Não
+		</label> <label class="radio-inline"> <input type="radio"
+			name="replicarDados" id="radioNao" value="1" /> Sim
+		</label>
+
+</div>
+</div>
+</th:block>
+
+<input type="hidden" name="replicarDados" value="0" th:if="${predioTotal == 0}" />
+
+
+
+
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="LayoutPadrao">
+
+<section layout:fragment="conteudo">
+	<div class="container">
+		<div class="cleafix row">
+			<div class="col-md-12">
+				<h1 class="pull-left">Semestres cadastrados</h1>
+				<button  class="pull-right btn btn-primary" style="margin-top: 30px" data-toggle="modal"
+													data-target="#novoContexto" >Novo
+					contexto</button>
+			</div>
+		</div>
+		<hr />
+		<br />
+
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th class="col-md-5">Semestre</th>
+					<th class="col-md-1">Semestre Atual</th>
+					<th class="col-md-2">Ações</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="cadSemestre: ${cadSemestres}">
+					<td th:text="|${cadSemestre.ano}.${cadSemestre.semestre}"></td>
+					<td class="text-center"><span th:if="${cadSemestre.ativo}"
+						class="glyphicon glyphicon-ok-sign text-success"
+						aria-hidden="true"></span></td>
+					<td><th:block th:if="${cadSemestre.ativo}">
+							<a href="#" class="button-semestre"> <span
+								class="glyphicon glyphicon-edit" data-toggle="tooltip"
+								data-placement="top" title="Editar Centro" aria-hidden="true"></span>
+							</a>
+							<form th:action="@{/semestre/editar}" method="POST"
+								id="editarSemestre">
+								<input type="hidden" th:value="${cadSemestre.idSemestre}"
+									name="idEditar" />
+							</form>
+
+						</th:block></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	
+
+
+<div class="modal fade" tabindex="-1" role="dialog" id="novoContexto"
+	aria-labelledby="gridSystemModalLabel">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="gridSystemModalLabel">Excluir
+					prédio</h4>
+			</div>
+
+			<div class="modal-body">
+				<div class="alert alert-warning">
+					<strong>ATENÇÃO!</strong> Você está iniciando um novo contexto!
+				</div>
+				<strong>Ao criar um novo contexto não será possível editar informações de prédios, salas e horários dos ontextos anteriores</strong>
+
+			</div>
+			<div class="modal-footer">
+
+				<div class="row pull-right">
+					<div class="col-md-6">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+					</div>
+					<div class="col-md-6">
+							<a   th:href="@{/cadsemestre}" role="button"
+								class="btn btn-primary">Prosseguir</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
+</div>
+
+
+
+
+	<script type="text/javascript">
+		$(function() {
+			$('[data-toggle="tooltip"]').tooltip()
+		})
+		
+	
+		$(document).on("click", ".button-semestre", function(e) {
+			$('#editarSemestre').submit();
+		});
+		
+	</script>
+
+</section>
+</html>

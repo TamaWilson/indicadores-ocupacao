@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="LayoutPadrao">
+
+<section layout:fragment="conteudo">
+
+
+	<div class="container-fluid">
+		
+		<div class="row">
+			<div class="col-md-6">
+			
+			<div class="row row-spacing text-right">
+		<div class="col-md-12">	
+		<button id="abrirTudo" class="btn btn-default">Expandir Guias</button>
+		<button id="fecharTudo" class="btn btn-default">Fechar Guias</button>
+	   </div>
+	   </div>
+			
+					
+				<div th:each="mesorregiao : ${mesorregioes}" class="panel-group">
+					<div class="panel panel-default cursor">
+						<div data-toggle="collapse"
+							th:href="|#${#strings.toLowerCase(mesorregiao.descricao)}|"
+							class="panel-heading " >
+							<div class="row">
+							<div class="col-md-1">
+							<span class="biggerIcon glyphicon glyphicon-map-marker" th:classappend="|${#strings.toLowerCase(mesorregiao.descricao)}-texto|"></span>
+							</div>
+							<div class="col-md-11">
+							<h4 	th:text="|MESORREGIÃO ${#strings.toUpperCase(mesorregiao.descricao)}|"></h4>
+							</div>
+							</div>
+						</div>
+					</div>
+					<div th:id="${#strings.toLowerCase(mesorregiao.descricao)}"
+						class="panel-collapse collapse allcollapse">
+						<ul class="list-group">
+
+							<li class="list-group-item"
+								th:if="${centro.mesorregiao != null and centro.mesorregiao.descricao == mesorregiao.descricao }"
+								th:each="centro : ${centros}"><span 
+								th:text="|${centro.nomeCentro} - ${centro.sigla}|" class="centroNome"></span>
+								<div>
+								<hr/>
+								<h6>Prédios:</h6>
+								<div class="list-group">
+										<a class="list-group-item" th:each="predio : ${predios}" th:if="${predio.centro.idCentro == centro.idCentro}" th:text="${predio.nomePredio}" th:href="@{/predio/{codigo}(codigo=${predio.idPredio})}"></a>
+									</div>
+								</div></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-6">
+				<div id="map" style="width: 100%; height: 700px"></div>
+			</div>
+
+		</div>
+	
+	
+
+	
+	</div>
+	
+	<script type="text/javascript" th:src="@{/js/geoxml3.js}"></script>
+	
+	<script th:inline="javascript">
+		var centros = /*[[${centros}]]*/
+		//<![CDATA[
+		
+			function initMap() {
+			var map = new google.maps.Map(document.getElementById('map'), {
+				zoom : 7,
+				center : {
+					lat : -5.6276179,
+					lng : -45.796236
+				}
+			});
+            
+			
+			
+			myParser = new geoXML3.parser({
+		        map: map,
+		        zoom: false,
+		        singleInfoWindow: true,
+		        suppressInfoWindows: true,
+		    });
+			
+			myParser.parse('/maps/maranhao.kml');
+
+		//	map.setZoom(5); 
+			
+			var infowindow = new google.maps.InfoWindow();
+
+			var marcador, i;
+
+			for (i = 0; i < centros.length; i++) {
+				
+				marcador = new google.maps.Marker({
+					position : new google.maps.LatLng(centros[i].lat,
+							centros[i].lon),
+					map : map,
+					title : centros[i].nomeCentro + " - " + centros[i].sigla
+				});
+				google.maps.event.addListener(marcador, 'click', (function(marcador, i) {
+				        return function() {
+				          infowindow.setContent(centros[i].nomeCentro + " - " + centros[i].sigla );
+				          infowindow.open(map, marcador);
+				        }
+				      })(marcador, i));
+			}
+
+		}
+		//]]>
+		
+		$('#fecharTudo').on('click', function() {
+			
+			  $('.panel-collapse').collapse('hide');
+		});
+		
+		$('#abrirTudo').on('click', function() {
+			
+			  $('.panel-collapse').collapse('show');
+		});
+
+		
+		
+		
+	</script>
+	<script
+		th:src="@{https://maps.googleapis.com/maps/api/js(key=${googleMapsAPIKey},callback=initMap)}"
+		async="async" defer="defer"></script>
+
+
+
+</section>
+</html>

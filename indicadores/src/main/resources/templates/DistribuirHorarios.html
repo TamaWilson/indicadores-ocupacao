@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="LayoutPadrao">
+
+<section layout:fragment="conteudo">
+	<div class="container-fluid">
+
+		<div class="clearfix">
+			<h1 class="pull-left" th:text="|Sala: ${sala.numeroSala}|"></h1>
+			<form th:action="@{/cadhorarios/horarios/salvar}" method="POST">
+				<input id="salvarTudo" type="submit" class="btn btn-default pull-right"
+					value="Salvar Alterações" />
+			</form>
+
+		</div>
+
+		<hr />
+
+
+		<div class="row">
+			<div class="col-md-8">
+				<h4>Horários alocados:</h4>
+				<div th:each="turno : ${turnos}" class="panel-group">
+
+					<div class="panel panel-default ">
+						<div  data-toggle="collapse"
+							th:href="|#${#strings.toLowerCase(turno.identificador)}|"
+							class="panel-heading cursor">
+							<h4 class="unselectable"
+								th:text="|${#strings.toUpperCase(turno.identificador)}|"></h4>
+						</div>
+
+
+
+						<div th:id="${#strings.toLowerCase(turno.identificador)}"
+							class="panel-collapse collapse in">
+
+							<table class="table table-bordered">
+								<thead>
+									<tr class="seven-cols">
+										<th class="col-md-2">HORARIOS</th>
+										<th th:each="dias : ${diasSemana}" th:text="${dias.descricao}"
+											class="col-md-2"></th>
+
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="todosHorarioPadrao : ${todosHorarioPadrao}"
+										th:if="${todosHorarioPadrao.tipo == turno.tipo}"
+										class="seven-cols">
+										<td
+											th:text="|${todosHorarioPadrao.inicio} - ${todosHorarioPadrao.fim}|"></td>
+										<td th:each="dias : ${diasSemana}">
+											<div th:id="|${horario.diaSemana}${horario.horarioOrdem}${horario.tipoDescricao}|"  th:each="horario : ${horarioRegistroNovo}"
+												th:if="${horario.horarioOrdem == todosHorarioPadrao.ordem and horario.diaSemana == dias.ordem and horario.tipoDescricao == turno.tipo}">
+											
+												<button  data-toggle="modal"
+													data-target="#modalRemover" type="button"
+													class="btn btn-default btn-sm realocar"
+													th:attrappend="data-idHorario=|${horario.diaSemana}${horario.horarioOrdem}${horario.tipoDescricao}|, data-disciplinaId=${horario.disciplinaId}, data-diaSemana=${horario.diaSemana}, data-ordem=${horario.horarioOrdem}, data-tipo=${horario.tipoDescricao}"
+													>
+													Remover
+												</button>
+												<hr class="hr-min" />
+
+												<span th:text="${horario.disciplinaNome}"></span>
+
+
+											</div>
+
+											<div th:id="${horarioSalvo.idHorario}" th:each="horarioSalvo : ${horariosCadastrados}"
+												th:if="${horarioSalvo.horarioOrdem == todosHorarioPadrao.ordem and horarioSalvo.diaSemana == dias.ordem and horarioSalvo.tipoDescricao == turno.tipo}">
+
+									
+												<button data-toggle="modal"
+													data-target="#modalRemover" type="button"
+													class="btn btn-default btn-sm remover"
+													th:attrappend="data-idHorario=${horarioSalvo.idHorario}"
+													>
+													Remover
+												</button>
+												<hr class="hr-min" />
+												<span th:text="${horarioSalvo.disciplinaNome}"></span>
+
+
+
+											</div>
+
+										</td>
+									</tr>
+
+								</tbody>
+
+							</table>
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<section id="containerConflitantes"
+				layout:include="HorariosConflitantes"></section>
+		</div>
+
+	</div>
+
+	<section layout:include="ModalAlocar"></section>
+	<section layout:include="ModalRemover"></section>
+
+	<!-- Modal -->
+	<div class="modal fade" id="modalEspera" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Aguarde</h4>
+				</div>
+				<div class="modal-body">
+					<p>Carregando conteúdo.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal fade" id="modalErro" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Ocorreu um erro</h4>
+				</div>
+				<div class="modal-body">
+					<p>O sistema apresentou um erro ao processar a requisição AJAX</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="erroSalvar">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">ERRO!</h4>
+      </div>
+      <div class="modal-body">
+        <p>Existem disciplinas não alocadas!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script th:inline="javascript">
+		
+	
+	var disciplinaId; 
+	var disciplinaDiaSemana;
+	var disciplinaOrdem; 
+	var disciplinaTipo;	
+	var horarioId;
+	var remocao;
+	var realocacao;
+			
+	
+	$(".remover").click(function () {
+		
+		 horarioId = this.getAttribute('data-idHorario');
+		 disciplinaId =  this.getAttribute('data-disciplinaId');
+	     disciplinaDiaSemana = this.getAttribute('data-diaSemana');
+	     disciplinaOrdem = this.getAttribute('data-ordem');
+	     disciplinaTipo = this.getAttribute('data-tipo');
+		 remocao="true";
+	    
+		
+	});
+	
+	
+
+	$(".realocar").click(function () {
+		
+		 horarioId = this.getAttribute('data-idHorario');
+		 disciplinaId =  this.getAttribute('data-disciplinaId');
+	     disciplinaDiaSemana = this.getAttribute('data-diaSemana');
+	     disciplinaOrdem = this.getAttribute('data-ordem');
+	     disciplinaTipo = this.getAttribute('data-tipo');
+	     realocacao = "true";
+	    
+		
+	});
+	
+	
+	$(document).ready(function(){
+	    $('#salvarTudo').click(function(e){
+	    	if($(".glyphicon-remove-sign").length > 0) {
+	    		e.preventDefault();
+	    		$('#erroSalvar').modal('show');
+		    		
+	    	} else {
+	    		console.log("Salvei");
+	    		e.submit();
+	    	}
+	    	
+	    });
+	});
+	
+	</script>
+
+</section>
+
+</html>

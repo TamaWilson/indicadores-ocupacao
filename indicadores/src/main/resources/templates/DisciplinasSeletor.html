@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+</head>
+
+<body>
+	<div th:fragment="resultsList">
+		<select name="disciplinaId" id="seletorDisciplina" class="form-control" required="required">
+			<option value="" disabled="disabled" selected="selected">Selecione uma disciplina</option>
+			<option th:each="disciplina : ${disciplinas}"
+				th:value="${disciplina.disciplinaId}"
+				th:text="${disciplina.disciplinaNome}"></option>
+		</select>
+	</div>
+</body>
+</html>

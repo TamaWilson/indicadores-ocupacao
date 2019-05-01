@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+
+<ul class="nav nav-pills">
+	<li th:each="planta, index : ${plantas}"
+		th:classappend="${planta.idPlanta} == ${sala.planta.idPlanta} ? active : '' "><a
+		class="mudarPlanta" data-toggle="pill"
+		th:text="|Nível ${planta.nivel}|" th:href="|#${index.index}|"
+		th:id="${planta.idPlanta}" th:attrappend="data-index=${index.index}">
+	</a></li>
+</ul>
+<br />
+<canvas id="canvas" width="500" height="500"
+	style="border: 1px solid black;"></canvas>
+
+<script th:src="@{/js/fabric.js}"></script>
+
+<script th:inline="javascript">
+//<![CDATA[ 
+	
+	/*[+
+		 var urlTDHS = [[@{/tdhs/fragmento}]];
+	
+			 +]*/
+
+ var plantasLista = /*[[${plantas}]]*/ []; 
+			 
+ var jsonCanvas = /*[[${plantaInicial.mapeamento}]]*/ ;
+ var filename = /*[[${plantaInicial.arquivoNome}]]*/ ;
+ var salaInicial = /*[[${sala.numeroSala}]]*/ ;
+
+ var urlImg = "/plantas/" + filename;
+
+
+
+var canvas = window._canvas = new fabric.Canvas('canvas');
+
+
+	
+	
+var imgObj = new Image();
+var imagem = new fabric.Image(imgObj);
+imgObj.src = urlImg;
+altura= canvas.getHeight();
+largura = canvas.getWidth();
+imagem.set({height: altura , width: largura})
+
+imgObj.onload = function() {
+	canvas.setBackgroundImage(imagem);
+	canvas.renderAll();
+};
+
+
+canvas.loadFromJSON(jsonCanvas);
+canvas.forEachObject(function(object){ object.lockMovementX = true, object.lockMovementY = true, object.hasControls = false, object.hasBorders = false, object.hoverCursor = 'pointer';});
+canvas.renderAll();
+
+var salaAtiva = canvas.getItemBySala(salaInicial);
+salaAtiva.setColor('green');
+
+canvas.on({
+    'mouse:down': function(e) {
+      if (e.target) {
+        e.target.opacity = 0.5;
+       
+        canvas.renderAll();
+        
+        atualizarSala(e.target);
+        
+        
+    	return $.ajax({
+    		url : urlTDHS,
+    		type : 'POST',
+    		data : {
+    			salaNumero: e.target.sala,
+   			salaAtualizada : e.target.idSala,
+    			predioAtual: /*[[${sala.predio.idPredio}]]*/,
+    		   semestreTDHS: /*[[${semestreContexto.idSemestre}]]*/
+    		},
+    		beforeSend: function() {
+    			
+    			/*$('#modalEspera').modal({
+    				  backdrop: 'static',
+    				    keyboard: false,
+    					show: true 
+    					});*/
+    		}
+    	})
+
+    	.done(
+    			function(data) {
+    			//	console.log(data);
+    				$("#horarioFragmento").html(data);
+    			//	$('#modalEspera').modal('hide');
+    			})
+
+    	.fail(
+    			function(xhr, ajaxOptions, thrownError) {
+    	//	$('#modalEspera').modal('hide');	
+    	//	$('#modalErro').modal('show');
+
+    	});
+        
+        
+        
+        
+       }
+    },
+    'mouse:up': function(e) {
+      if (e.target) {
+        e.target.opacity = 0.3;
+        canvas.renderAll();
+        
+        ativaSalaAnterior = false;
+     }
+    }
+  });
+
+
+function atualizarSala(salaEscolhida) {
+	
+	salaAtiva.setColor('red');	
+	salaEscolhida.setColor('green');
+	salaAtiva = salaEscolhida;
+	
+
+};		
+
+$(".mudarPlanta").click(function () {
+	
+	 plantaId = this.id;
+	 plantaIndex = this.getAttribute('data-index');
+    
+	 
+	 jsonPlanta = plantasLista[plantaIndex].mapeamento;
+	 filePlanta = plantasLista[plantaIndex].arquivoNome;
+	 
+	 urlImgPlanta = "/plantas/" + filePlanta;
+	 
+	 
+	 imgNew = new Image();
+	 imagemNova = new fabric.Image(imgNew);
+	 imgNew.src = urlImgPlanta;
+	 altura= canvas.getHeight();
+	 largura = canvas.getWidth();
+	 imagemNova.set({height: altura , width: largura})
+
+	 imgNew.onload = function() {
+	 	canvas.setBackgroundImage(imagemNova);
+	 	canvas.renderAll();
+	 };
+
+	canvas.loadFromJSON(jsonPlanta);
+	canvas.forEachObject(function(object){ object.lockMovementX = true, object.lockMovementY = true, object.hasControls = false, object.hasBorders = false, object.hoverCursor = 'pointer';});
+	
+			
+    canvas.renderAll();
+			 
+	salaAnterior = canvas.getItemByIdSala(salaAtiva.idSala);
+			
+	if(salaAnterior != null) { 
+		
+		atualizarSala(salaAnterior);
+	 }
+
+});
+
+
+	
+	  //]]>
+</script>
+
+</html>

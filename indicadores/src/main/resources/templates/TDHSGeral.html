@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+    
+
+<hr/>
+<div class="row">
+	<div class="col-md-4">
+		<h4 th:text="|TOTAL DE SALAS NO PRÉDIO: ${#lists.size(salas)}|"></h4>
+	</div>
+	<div class="col-md-4">
+		<div th:text="|TOTAl DE HORÁRIOS: ${tdhs.totalHorarios}|"></div>
+		<div th:text="|TOTAL DE HORÁRIOS DISPONIVEIS: ${tdhs.totalDisponivelGeral}|"></div>
+	</div>
+	<div class="col-md-4">
+		<h4 th:text="|TDHS: ${tdhs.TDHSGeral}%|"></h4>
+	</div>
+</div>
+
+<hr/>
+			<div class="row" th:each="sala : ${salas}"
+				th:if="${salaStat.index % width == 0}">
+
+				<div class="col-md-2 "
+					th:each="index : ${#numbers.sequence(salaStat.index, salaStat.index + width - 1)}"
+					th:if="${index lt salaStat.size}">
+					<div class="panel panel-default">
+						<div th:onclick="|window.location='@{/predio/{codigo}/tdhs/{sal}(codigo=${salas[index].predio.idPredio}, sal=${salas[index].idSala})}';|" class="panel-heading text-center cursor">
+							<h4 th:text="|Sala: ${salas[index].numeroSala}|"
+								style="font-weight: bolder;"></h4>
+						</div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-md-12 text-center">
+									<h1 class="porcentagem"
+										th:text="|${salas[index].ocupacao.PorcentagemTotal}%|"></h1>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12 text-center totalDisponivel">
+									<p
+										th:text="|${salas[index].ocupacao.total} - Horários Disponíveis|"></p>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12 ">
+									<div class="row">
+										<div class="col-md-12">
+											<span style="font-weight: bold;">Matutino:</span>
+										</div>
+										<div class="col-md-12">
+											<span
+												th:text="|${salas[index].ocupacao.matutino} Horários livres|"></span>
+										</div>
+									</div>
+									<div class="row">
+
+										<div class="col-md-12">
+
+											<span style="font-weight: bold;">Vespertino:</span>
+										</div>
+										<div class="col-md-12">
+											<span
+												th:text="|${salas[index].ocupacao.vespertino} Horários livres|">
+											</span>
+										</div>
+
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<span style="font-weight: bold;">Noturno:</span>
+										</div>
+										<div class="col-md-12">
+											<span
+												th:text="|${salas[index].ocupacao.noturno} Horários livres|"></span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+
+</html>

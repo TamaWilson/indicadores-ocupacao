@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="LayoutPadrao">
+
+<section layout:fragment="conteudo">
+	<div class="container-fluid">
+		<h1>Centros cadastrados</h1>
+		<hr />
+		<br />
+
+		<div class="panel-body">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th class="col-md-5">Nome</th>
+						<th class="col-md-1">Sigla</th>
+						<th class="col-md-1">Mesorregião</th>
+						<th class="col-md-1 text-center">Localização</th>
+						<th class="col-md-2">Ações</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="centro: ${centros}">
+						<td th:text="${centro.nomeCentro}"></td>
+						<td th:text="${centro.sigla}"></td>
+						<td th:text="${centro.mesorregiao}"></td>
+						<td class="text-center"
+							th:if="${centro.lat != null and centro.lon != null}"><span
+							class="glyphicon glyphicon-ok-sign text-success"
+							aria-hidden="true"></span></td>
+						<td class="text-center"
+							th:if="${centro.lat == null and centro.lon == null}"><span
+							class="glyphicon glyphicon-remove-sign text-danger"
+							aria-hidden="true"></span></td>
+						<td>
+						<a
+							th:href="@{/centro/editar/{codigo}(codigo=${centro.idCentro})}">
+								<span class="glyphicon glyphicon-edit" data-toggle="tooltip"
+								data-placement="top" title="Editar Centro" aria-hidden="true"></span>
+						</a>
+						<a th:href="@{/cadpredio/{codigo}(codigo=${centro.idCentro})}"><span class="biggerIcon glyphicon glyphicon-plus-sign" aria-hidden="true" data-toggle="tooltip"
+								data-placement="top" title="Cadastrar Prédio"></span></a>
+						<a th:href="@{/predios?sigla={sigla}(sigla=${centro.sigla})}"><span class="biggerIcon glyphicon glyphicon-home" aria-hidden="true" data-toggle="tooltip"
+								data-placement="top" title="Visalizar Prédios"></span></a>
+							
+							
+							
+							
+								<a th:href="@{/cadhorarios?sigla={sigla}(sigla=${centro.sigla})}"><span class="biggerIcon glyphicon glyphicon-list-alt" aria-hidden="true" data-toggle="tooltip"
+								data-placement="top" title="Cadastrar Horários"></span></a>
+								
+								
+								
+								
+								
+								</td>
+					</tr>
+
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+
+$(function () {
+	  $('[data-toggle="tooltip"]').tooltip()
+	})
+	
+	
+	
+</script>
+
+</section>
+</html>

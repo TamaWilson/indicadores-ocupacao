@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="LayoutPadrao">
+
+
+<section layout:fragment="conteudo">
+	<div class="container">
+		<h1>Prédios Cadastrados</h1>
+		<hr />
+		<div class="alert alert-success fade in alert-dismissable"
+			th:if="${!#strings.isEmpty(mensagem)}">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close"
+				title="close">×</a> <span th:text="${mensagem}"></span>
+		</div>
+		<div class="row">
+			<form th:action="@{/predios}" method="GET" th:object="${filtro}">
+				<select class="form-control" th:field="*{sigla}"
+					onchange="submit();">
+					<option value="">Todos os os centros</option>
+					<option th:each="centro : ${centros}" th:value="${centro.sigla}"
+						th:text="${centro.nomeCentro}">1</option>
+				</select>
+			</form>
+		</div>
+		<br />
+
+
+		<div class="row">
+			<div th:if="${predios.empty}" class="panel panel-default">
+				<div class="panel-heading">NENHUM PRÉDIO CADASTRADO NESTE
+					CENTRO.</div>
+			</div>
+
+			<div th:each="predio : ${predios}" class="panel panel-default">
+				<div class="panel-heading clearfix">
+
+					<span th:text="${predio.nomePredio}" class="pull-left"></span>
+					<div class="pull-right">
+						<div class="btn-group">
+
+
+							<button type="button" class="btn btn-default dropdown-toggle"
+								data-toggle="dropdown" aria-haspopup="true"
+								aria-expanded="false">
+								<span class="glyphicon glyphicon-cog" style="margin-right: 5px;">
+								</span><span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a
+									th:href="@{/cadpredio/editar/{predio}(predio=${predio.idPredio})}">Editar
+										prédio</a></li>
+								<li><a href="#" class="button-mapa"
+									th:attr="data-predio=${predio.idPredio}">Adicionar Planta</a>
+									<form th:id="${predio.idPredio}" th:action="@{/mapeamento}"
+										method="POST">
+										<input type="hidden" name="idPredio"
+											th:value="${predio.idPredio}" />
+									</form></li>
+								<li role="separator" class="divider"></li>
+								<li><a style="color: red;" href="#" data-toggle="modal"
+									class="button-removerPredio" data-target="#modalRemover"
+									th:attrappend="data-predio=${predio.idPredio}">Excluir
+										prédio</a></li>
+							</ul>
+						</div>
+
+
+
+					</div>
+				</div>
+				<th:block th:each="planta : ${plantas}"
+					th:if="${planta.predio.idPredio == predio.idPredio}">
+					<table class="table table-bordered">
+						<thead>
+							<tr>
+								<th>Nível</th>
+								<th>Ações</th>
+
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td th:text="${planta.nivel}"></td>
+								<td><a href="#"
+									th:attrappend="data-planta=${planta.idPlanta}"
+									class="button-editarPlanta"> <span
+										class="glyphicon glyphicon-edit" data-toggle="tooltip"
+										data-placement="top" title="Editar" aria-hidden="true"></span>
+								</a>
+									<form style="display: none;"
+										th:id="|planta-${planta.idPlanta}|"
+										th:action="@{/mapeamento/editar}" method="POST">
+										<input type="hidden" name="idplanta"
+											th:value="${planta.idPlanta}" />
+									</form> <a href="#" data-toggle="modal"
+									data-target="#modalRemoverPlanta" class="button-removerPlanta"
+									th:attrappend="data-planta=${planta.idPlanta}"><span
+										class="glyphicon glyphicon-remove-sign " aria-hidden="true"
+										data-toggle="tooltip" data-placement="top" title="Excluir"></span></a>
+
+									<a
+									th:href="@{/cadhorarios?sigla={sigla}(sigla=${predio.centro.sigla},predio=${predio.idPredio})}"><span
+										class="biggerIcon glyphicon glyphicon-list-alt"
+										aria-hidden="true" data-toggle="tooltip" data-placement="top"
+										title="Cadastrar Horários"></span></a></td>
+							</tr>
+						</tbody>
+					</table>
+				</th:block>
+			</div>
+		</div>
+	</div>
+
+
+
+
+	<section layout:include="ModalRemoverPredio"></section>
+
+	<section layout:include="ModalRemoverPlanta"></section>
+
+
+	<script type="text/javascript">
+		$(function() {
+			$('[data-toggle="tooltip"]').tooltip()
+		})
+
+		$(document).on("click", ".button-mapa", function(e) {
+
+			var formId = $(this).attr('data-predio');
+
+			$('#' + formId).submit();
+		});
+
+		$(document).on("click", ".button-editarPlanta", function(e) {
+
+			var formId = $(this).attr('data-planta');
+
+			$('#planta-' + formId).submit();
+		});
+
+		$(document).on("click", ".button-removerPredio", function(e) {
+
+			var formId = $(this).attr('data-predio');
+
+			$("#predioRemover").val(formId);
+		});
+
+		$(document).on("click", ".button-removerPlanta", function(e) {
+
+			var formId = $(this).attr('data-planta');
+
+			$("#plantaRemover").val(formId);
+		});
+	</script>
+
+
+
+</section>
+</html>

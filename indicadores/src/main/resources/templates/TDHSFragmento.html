@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<div class="row">
+	<div class="col-md-8">
+		<h1 th:text="|Sala: ${sala.NumeroSala}|"></h1>
+	</div>
+	<th:block th:if="${sala.ocupacao}">
+	<div class="col-md-2">
+		<h5 th:text="|Horários Disponíveis: ${sala.ocupacao.total}|"></h5>
+		<h5 th:text="|Total de horários: ${sala.ocupacao.TotalHorarios}|"></h5>
+	</div>
+	<div class="col-md-2">
+		<h3 th:text="|TDHS: ${sala.ocupacao.PorcentagemTotal}%|"></h3>
+	</div>
+	</th:block>
+</div>
+<hr />
+
+<div class="row"></div>
+
+<div class="row">
+	<div class="col-md-12">
+		
+			<div class="row row-spacing text-right">
+		<div class="col-md-12">	
+		<button id="abrirTudo" class="btn btn-default">Expandir Guias</button>
+		<button id="fecharTudo" class="btn btn-default">Fechar Guias</button>
+	   </div>
+	   </div>
+		
+		
+			
+		<div th:each="turno : ${turnos}" class="panel-group">
+
+			<div class="panel panel-default ">
+				<div data-toggle="collapse"
+					th:href="|#${#strings.toLowerCase(turno.identificador)}|"
+					class="panel-heading cursor clearfix">
+					<h4 class="unselectable pull-left"
+						th:text="|${#strings.toUpperCase(turno.descricao)}|"></h4>
+					<th:block th:if="${sala.ocupacao}">
+					<h4 class="pull-right"
+						th:text="|${sala.ocupacao.PorcentagemMatutino}% de Disponibilidade|"
+						th:if="${turno.tipo == 1}"></h4>
+					<h4 class="pull-right"
+						th:text="|${sala.ocupacao.PorcentagemVespertino}% de Disponibilidade|"
+						th:if="${turno.tipo == 2}"></h4>
+					<h4 class="pull-right"
+						th:text="|${sala.ocupacao.PorcentagemNoturno}% de Disponibilidade|"
+						th:if="${turno.tipo == 3}"></h4>
+						</th:block>
+				</div>
+
+
+
+				<div th:id="${#strings.toLowerCase(turno.identificador)}"
+					class="panel-collapse collapse in">
+
+					<table class="table table-bordered">
+						<thead>
+							<tr class="seven-cols">
+								<th class="col-md-2">HORARIOS</th>
+								<th th:each="dias : ${diasSemana}" th:text="${dias.descricao}"
+									class="col-md-2"></th>
+
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="todosHorarioPadrao : ${todosHorarioPadrao}"
+								th:if="${todosHorarioPadrao.tipo == turno.tipo}"
+								class="seven-cols">
+								<td
+									th:text="|${todosHorarioPadrao.inicio} - ${todosHorarioPadrao.fim}|"></td>
+								<td th:each="dias : ${diasSemana}">
+
+									<div th:id="${horarioSalvo.idHorario}"
+										th:each="horarioSalvo : ${horariosCadastrados}"
+										th:if="${horarioSalvo.horarioOrdem == todosHorarioPadrao.ordem and horarioSalvo.diaSemana == dias.ordem and horarioSalvo.tipoDescricao == turno.tipo}">
+
+
+										<span th:text="${horarioSalvo.disciplinaNome}"></span>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+
+
+$('#fecharTudo').on('click', function() {
+	
+	  $('.panel-collapse').collapse('hide');
+});
+
+$('#abrirTudo').on('click', function() {
+	
+	  $('.panel-collapse').collapse('show');
+});
+
+
+
+
+
+
+</script>
+
+
+
+
+</html>

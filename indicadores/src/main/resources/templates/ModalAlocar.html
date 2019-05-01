@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+
+
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modalAlocar"
+	aria-labelledby="gridSystemModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="gridSystemModalLabel">Alocar
+					horário</h4>
+			</div>
+
+
+
+			<div class="modal-body">
+
+				<form id="alocarForm"
+					method="POST">
+
+					<div class="form-group">
+						<select id="seletorCentro" name="seletorCentro"
+							class="form-control" required="required">
+							<option selected="selected" disabled="disabled" value="">Selecione
+								um centro</option>
+							<option th:each="centro : ${centrosLista}"
+								th:value="${centro.sigla}" th:text="${centro.nomeCentro}"></option>
+						</select>
+					</div>
+
+
+					<div class="form-group">
+						<div id="containerPredio">
+							<select id="seletorPredio" name="seletorPredio"
+								class="form-control" required="required">
+								<option value="" disabled="disabled" selected="selected">Selecione
+									um prédio</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div id="containerSala">
+							<select id="seletorSala" name="seletorSala" class="form-control"
+								required="required">
+								<option value="" disabled="disabled" selected="selected">Nenhum
+									prédio selecionado</option>
+							</select>
+						</div>
+					</div>
+				</form>
+
+			</div>
+			<div class="modal-footer">
+				
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+				<button type="button" id="preAlocar" class="btn btn-primary">Pré-Alocar</button>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<script type="text/javascript" th:src="@{/js/jquery.validate.min.js}"></script>
+<script th:inline="javascript">
+	/*[+
+	 var urlPredios = [[@{/cadhorarios/predios}]];
+	 var urlAlocar = [[@{/cadhorarios/horarios/checar}]];
+	
+	 +]*/
+
+	$(document).ready(function() {
+		$("#alocarForm").validate({
+			 showErrors: function(errorMap, errorList) {
+			      			    },
+			rules : {
+				seletorCentro : "required",
+				seletorPredio : "required",
+				seletorSala : "required"
+			}		});
+	});
+
+	
+	
+	
+	
+	$('#seletorCentro').on(
+			'change',
+			function(e) {
+
+				var centro = $(this);
+
+				$.ajax({
+					url : urlPredios,
+					type : 'POST',
+					data : {
+						centroSelecionado : centro.val(),
+					},
+					beforeSend : function() {
+
+						$('#modalEspera').modal({
+							backdrop : 'static',
+							keyboard : false,
+							show : true
+						});
+					}
+				})
+
+				.done(
+						function(data) {
+
+							$("#containerPredio").html(data);
+							$('#seletorSala').find("option:gt(0)").remove();
+							$('#seletorSala').find("option:first").text(
+									"Nenhum prédio selecionado");
+							$('#seletorSala').val("");
+							$('#modalEspera').modal('hide');
+						})
+
+				.fail(function(xhr, ajaxOptions, thrownError) {
+					$('#modalEspera').modal('hide');
+					$('#modalErro').modal('show');
+				});
+			});
+
+	$('#preAlocar').on('click', function(e) {
+
+		if ($("#alocarForm").valid()) {
+		
+			
+			var idSala = $("#seletorSala").val();
+	
+		$.ajax({
+			url : urlAlocar,
+			type : 'POST',
+			data : {
+				disciplinaAlocada : disciplinaId,
+				diaSemana: disciplinaDiaSemana,
+				ordem: disciplinaOrdem,
+				tipo: disciplinaTipo,
+				salaAlocada: idSala,
+				
+			},
+			beforeSend: function() {
+				
+				$('#modalEspera').modal({
+					  backdrop: 'static',
+					    keyboard: false,
+						show: true 
+						});
+			}
+		})
+
+		.done(
+				function(data) {
+					
+					$('#modalEspera').modal('hide');
+					
+					$("#modalAlocar").modal('hide');
+					$("#containerConflitantes").html(data);
+				})
+
+		.fail(
+				function(xhr, ajaxOptions, thrownError) {
+			$('#modalEspera').modal('hide');	
+			$('#modalErro').modal('show');
+		});
+		
+		}
+	});
+
+	$('#modalAlocar').on(
+			'hidden.bs.modal',
+			function() {
+
+				$('#seletorSala').find("option:gt(0)").remove();
+				$('#seletorSala').find("option:first").text(
+						"Nenhum centro selecionado");
+				$('#seletorSala').val("");
+
+				$('#seletorPredio').find("option:gt(0)").remove();
+
+				$('#seletorPredio').find("option:first").text(
+						"Nenhum prédio selecionado");
+				$('#seletorPredio').val("");
+
+				$('#seletorCentro').val("");
+			});
+</script>
+
+
+</html>

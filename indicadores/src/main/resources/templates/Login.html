@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="LayoutPadrao">
+
+<section layout:fragment="conteudo">
+	<div class="container">
+		<h1 class="col-md-offset-2">Login</h1>
+		<hr class="col-md-offset-2"/>
+		<br />
+		<form th:action="@{/login}" method="post" class="form-horizontal col-md-offset-3">
+			<div class="form-group">
+				<label for="username" class="control-label col-md-2">Usuário:</label>
+				<div class="col-md-4">
+					<input id="username" name="username" class="form-control col-md-4"
+						placeholder="Usuário" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="password" class="control-label col-md-2">Senha:</label>
+				<div class="col-md-4">
+
+					<input type="password" id="password" name="password"
+						class="form-control" placeholder="Senha" />
+				</div>
+			</div>
+			<div class="col-md-offset-4 col-md-2">
+			<button class="btn btn-primary btn-block">Entrar</button>
+			</div>
+		</form>
+	</div>
+</section>
+</html>

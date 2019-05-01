@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+
+
+	<div class="row">
+		<div class="col-md-4">
+			<div class="form-group">
+				<label for="arquivo">Escolher imagem:</label> <input
+					type="file" id="arquivo" name="arquivo" />
+				<p>Carregue uma imagem</p>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<div class="row">
+				<div class="col-md-12">
+					<canvas id="canvas" width="500" height="500"
+						style="border: 1px solid black;"></canvas>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6" style="margin-top: 10px;">
+					<button type="button" onclick="apagar();" class="btn btn-default">Apagar
+						selecionado</button>
+					<button type="button" onclick="limpar();" class="btn btn-default">Limpar
+						tudo</button>
+				</div>
+				<div class="col-md-3 col-md-offset-1" style="margin-top: 10px;">
+					<input id="mapeamento" name="mapeamento" type="hidden" value="" />
+					<button type="submit" id="salvarTudo" class="btn btn-default">Salvar
+						mapeamento</button>
+				</div>
+
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Identificação da sala</h3>
+				</div>
+				<div class="panel-body">
+					<div id="propriedade">
+						<p>Nenhum item selecionado</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<script th:src="@{js/fabric.js}"></script>
+<script th:src="@{js/sala.js}"></script>
+
+
+</html>

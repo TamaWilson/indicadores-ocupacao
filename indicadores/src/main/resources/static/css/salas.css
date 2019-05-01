@@ -1,0 +1,252 @@
+@CHARSET "utf-8";
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 145px;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 135px;
+  background-color: #004b82;
+}
+
+.text-muted {
+  color:  #fff;
+}
+
+
+
+.footer-separator {
+	
+	height: 15px;
+}
+
+
+.navbar-inverse {
+    background-color: #004b82;
+    border-color: #004b82;
+}
+
+.navbar-inverse .navbar-nav>li>a {
+	
+	color: #fff;
+}
+
+
+.navbar-inverse .navbar-nav>li>a:focus, .navbar-inverse .navbar-nav>li>a:hover {
+    color: #9d9d9d;
+    background-color: transparent;
+}
+
+
+
+.nav-pills>li>a {
+    border-radius: 4px;
+    border: 1px #337ab7 solid;
+
+}
+
+.horapadrao {
+	min-width: 90px;
+	white-space: normal;
+}
+
+.glyphicon.glyphicon-ok-sign {
+	font-size: 30px;
+}
+
+.glyphicon.glyphicon-remove-sign {
+	font-size: 30px;
+}
+
+
+.glyphicon.glyphicon-edit {
+	font-size: 30px;
+}
+
+
+.biggerIcon {
+	
+	font-size: 30px;
+}
+
+.cursor {
+	cursor: pointer;
+}
+
+.norte {
+	color: #fff !important;
+	background-color: #0f8e47 !important;
+}
+
+.norte-texto {
+	color: #0f8e47;
+}
+
+.sul {
+	color: #fff !important;
+	background-color: #3a54a2 !important;
+}
+
+.sul-texto {
+	color: #3a54a2;
+}
+
+.leste {
+	color: #fff !important;
+	background-color: #714c37 !important;
+}
+
+.leste-texto {
+	color: #714c37;
+}
+
+.oeste {
+	color: #fff !important;
+	background-color: #e5ad36 !important;
+}
+
+.oeste-texto {
+	color: #e5ad36
+}
+
+.centro {
+	color: #fff !important;
+	background-color: #f63439 !important;
+}
+
+.centro-texto {
+	color: #f63439;
+}
+
+.panel-body {
+	padding-top: 0px;
+}
+
+.porcentagem {
+	color: #0594d4;
+}
+
+.totalDisponivel {
+	font-weight: bold;
+	background-color: #dddddd;
+	padding-top: 5px;
+}
+
+.
+.unselectable {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.hr-min {
+	margin-top: 5px !important;
+	margin-bottom: 10px !important;
+}
+
+.text {
+	max-width: 177px;
+}
+
+.text span {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: inline-block;
+	max-width: 100%;
+}
+
+.row-spacing {
+	margin-bottom: 5px;
+}
+
+.centroNome {
+	font-weight: bold;
+}
+
+.break-text p {
+	word-wrap: break-word;
+}
+
+#wrapper {
+	position: relative;
+}
+
+#over_map {
+	height: 545px;
+	position: absolute;
+	padding: 10px;
+	top: 0px;
+	left: 65px	;
+	z-index: 99;
+	background: rgba(0, 0, 0, 0.21);
+	border-radius: 10px;
+	width: 235px;
+}
+
+
+.predioDetalhes { 
+	
+	background-color: #009d90;
+	border-radius: 10px;
+	color: #f9f9f9;
+}
+
+
+.observacao {
+	
+	min-height: 125px;
+}
+
+input[type=number]::-webkit-inner-spin-button {
+	opacity: 1
+}
+
+@media ( min-width : 768px) {
+	.seven-cols .col-md-2, .seven-cols .col-sm-2, .seven-cols .col-lg-2 {
+		width: 100%;
+		*width: 100%;
+	}
+	.seven-cols .col-md-1, .seven-cols .col-sm-1, .seven-cols .col-lg-1 {
+		width: 100%;
+		*width: 100%;
+	}
+}
+
+@media ( min-width : 992px) {
+	.seven-cols .col-md-2, .seven-cols .col-sm-2, .seven-cols .col-lg-2 {
+		width: 7.142857142857143%;
+		*width: 7.142857142857143%%;
+	}
+	.seven-cols .col-md-1, .seven-cols .col-sm-1, .seven-cols .col-lg-1 {
+		width: 3, 571428571428571%;
+		*width: 3, 571428571428571%%;
+	}
+}
+
+/**
+ *  The following is not really needed in this case
+ *  Only to demonstrate the usage of @media for large screens
+ */
+@media ( min-width : 1200px) {
+	.seven-cols .col-md-2, .seven-cols .col-sm-2, .seven-cols .col-lg-2 {
+		width: 7.142857142857143%%;
+		*width: 7.142857142857143%%;
+	}
+	.seven-cols .col-md-1, .seven-cols .col-sm-1, .seven-cols .col-lg-1 {
+		width: 3, 571428571428571%;
+		*width: 3, 571428571428571%%;
+	}
+}
+}

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="LayoutPadrao">
+
+<section layout:fragment="conteudo">
+	<div class="container">
+		<h1 th:text="|${centro.sigla} - ${centro.nomeCentro}|">Centro de TESTE2</h1>
+		<hr />
+		<form th:action="@{/cadhorarios/horarios}" method="POST">
+			<h4>Informações da disciplina:</h4>
+			<div class="form-group">
+				<select id="seletorCurso" class="form-control" required="required">
+					<option selected="selected" disabled="disabled" value="">Selecione
+						um curso</option>
+					<option th:each="curso : ${cursos}" th:value="${curso.curso_id}"
+						th:text="${curso.curso_nome}"></option>
+				</select>
+			</div>
+
+
+			<div class="form-group">
+				<div id="containerPeriodo">
+					<select  class="form-control" required="required">
+						<option value="" disabled="disabled" selected="selected">Nenhum
+							curso selecionado</option>
+					</select>
+				</div>
+			</div>
+
+
+			<div class="form-group">
+				<div id="containerDisciplina">
+					<select id="seletorDisciplina" class="form-control"
+						required="required">
+						<option value="" disabled="disabled" selected="selected">Nenhuma
+							disciplina selecionada</option>
+					</select>
+				</div>
+			</div>
+			<hr />
+			<h4>Informações da Sala:</h4>
+			<div class="form-group">
+				<div id="containerPredios " th:object="${predioEscolhido}">
+					<select id="seletorPredio" class="form-control" required="required" th:field="*{idPredio}" >
+						<option value="0" disabled="disabled" selected="selected">Selecione
+							um prédio</option>
+						<option th:each="predio : ${predios}"
+							th:value="${predio.idPredio}" th:text="${predio.nomePredio}"></option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<div id="containerSala">
+					<select id="seletorSala" name="sala" class="form-control" required="required">
+						<option value="0" disabled="disabled" selected="selected" th:if="${salas.empty}">Nenhum prédio selecionado</option>
+						<option value="0" disabled="disabled" selected="selected" th:if="${!salas.empty}">Selecione uma sala</option>
+						<option th:each="sala : ${salas}"
+				th:value="${sala.idSala}"
+				th:text="${sala.numeroSala}"></option>
+						
+					</select>
+				</div>
+			</div>
+
+			<input type="submit" class="btn btn-default" value="Incluir horários" />
+		</form>
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="modalEspera" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Aguarde</h4>
+				</div>
+				<div class="modal-body">
+					<p>Carregando conteúdo.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal fade" id="modalErro" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Ocorreu um erro</h4>
+				</div>
+				<div class="modal-body">
+					<p>O sistema apresentou um erro ao processar a requisição AJAX</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+	<script th:inline="javascript">
+		/*[+
+		 var urlPeriodos = [[@{/cadhorarios/periodos}]];
+		 var urlSalas = [[@{/cadhorarios/salas}]];		
+		 +]*/
+
+		$('#seletorCurso').on(
+				'change',
+				function(e) {
+
+					var curso = $(this);
+
+					$.ajax({
+						url : urlPeriodos,
+						type : 'POST',
+						data : {
+							cursoSelecionado : curso.val(),
+						},
+						beforeSend: function() {
+							
+							$('#modalEspera').modal({
+								  backdrop: 'static',
+								    keyboard: false,
+									show: true 
+									});
+						}
+					})
+
+					.done(
+							function(data) {
+
+								$("#containerPeriodo").html(data);
+								$('#seletorDisciplina').find("option:gt(0)")
+										.remove();
+								$('#seletorDisciplina').find("option:first")
+										.text("Nenhum período selecionado");
+								$('#seletorDisciplina').val("");
+								console.log("Limpei as disciplinas");
+								$('#modalEspera').modal('hide');
+							})
+
+					.fail(
+							function(xhr, ajaxOptions, thrownError) {
+						$('#modalEspera').modal('hide');	
+						$('#modalErro').modal('show');
+					});
+				});
+		
+		$('#seletorPredio').on(
+				'change',
+				function(e) {
+					console.log("Escolhi o predio");
+					var predio = $(this);
+
+					$.ajax({
+						url : urlSalas,
+						type : 'POST',
+						data : {
+							predioSelecionado : predio.val(),
+						},
+						beforeSend: function() {
+							
+							$('#modalEspera').modal({
+								  backdrop: 'static',
+								    keyboard: false,
+									show: true 
+									});
+						}
+					})
+
+					.done(
+							function(data) {;
+								$("#containerSala").html(data);
+								$('#modalEspera').modal('hide');
+							})
+
+					.fail(
+							function(xhr, ajaxOptions, thrownError) {
+						$('#modalEspera').modal('hide');	
+						$('#modalErro').modal('show');
+
+					});
+				});		
+	</script>
+</section>
+</html>
